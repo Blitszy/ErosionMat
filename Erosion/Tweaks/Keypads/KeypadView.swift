@@ -213,12 +213,12 @@ struct KeypadView: View {
                     throw "failed to import theme!"
                 }
             } catch {
-                print("(kp) failed to import theme: \(error)")
+                print("(kp) failed to import theme: \(error.localizedDescription)")
                 Alertinator.shared.alert(title: "Failed to import file!", body: AppMsg.opFailed)
             }
         case .failure(let error):
-            print("(fm) failed to import file: \(error)")
-            Alertinator.shared.alert(title: "Failed to import file!", body: "\(error)")
+            print("(kp) failed to import file: \(error.localizedDescription)")
+            Alertinator.shared.alert(title: "Failed to import file!", body: "\(error.localizedDescription)")
         }
     }
     

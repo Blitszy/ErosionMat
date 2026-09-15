@@ -81,7 +81,7 @@ struct OperationsView: View {
                         print("(ov) successfully overwrote file: \(targetURL.path) (\(imprtData.count))")
                         Haptic.shared.play(.soft)
                     } catch {
-                        print("(ov) failed to overwrite: \(error)")
+                        print("(ov) failed to overwrite: \(error.localizedDescription)")
                         Alertinator.shared.alert(title: "Failed to overwrite file!", body: "Make sure that your paths are correct and that you have access. Check error logs for more detailed information.")
                     }
                 }
@@ -94,7 +94,7 @@ struct OperationsView: View {
                         print("(ov) successfully moved file: \(imprtName) -> \(targetURL.path)")
                         Haptic.shared.play(.soft)
                     } catch {
-                        print("(ov) failed to move: \(error)")
+                        print("(ov) failed to move: \(error.localizedDescription)")
                         Alertinator.shared.alert(title: "Failed to move file!", body: "Make sure that your paths are correct and that you have access. Check error logs for more detailed information.")
                     }
                 }
@@ -107,7 +107,7 @@ struct OperationsView: View {
                         print("(ov) successfully deleted file: \(targetURL.path)")
                         Haptic.shared.play(.heavy)
                     } catch {
-                        print("(ov) failed to delete: \(error)")
+                        print("(ov) failed to delete: \(error.localizedDescription)")
                         Alertinator.shared.alert(title: "Failed to delete file!", body: "Make sure that your paths are correct and that you have access. Check error logs for more detailed information.")
                     }
                 }
@@ -136,11 +136,11 @@ struct OperationsView: View {
                 imprtData = try Data(contentsOf: recURL)
                 imprtName = recURL.lastPathComponent
             } catch {
-                print("(ov) failed to import file: \(error)")
+                print("(ov) failed to import file: \(error.localizedDescription)")
                 Alertinator.shared.alert(title: "Failed to import file!", body: "This file is likely invaild, corrupted, or inaccessible. Please try a different overwrite file.")
             }
         case .failure(let error):
-            print("(ov) failed to import file: \(error)")
+            print("(ov) failed to import file: \(error.localizedDescription)")
             Alertinator.shared.alert(title: "Failed to import file!", body: "This file is likely invaild, corrupted, or inaccessible. Please try a different overwrite file.")
         }
     }

@@ -107,7 +107,7 @@ final class PBHandler {
                 return tendiesObject
             }
         } catch {
-            print("(pb) failed to extract .tendies: \(error)")
+            print("(pb) failed to extract .tendies: \(error.localizedDescription)")
         }
         return nil
     }
@@ -149,7 +149,7 @@ final class PBHandler {
             }
             try newData.write(to: url)
         } catch {
-            print("(pb) failed to update plist: \(error)")
+            print("(pb) failed to update plist: \(error.localizedDescription)")
         }
     }
 }

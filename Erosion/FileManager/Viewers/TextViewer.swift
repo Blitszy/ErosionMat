@@ -139,7 +139,7 @@ struct TextViewer: View {
             try data.write(to: url)
             return true
         } catch {
-            print("[!] failed to write data: \(error)")
+            print("(fm) failed to write data: \(error.localizedDescription)")
         }
         return false
     }

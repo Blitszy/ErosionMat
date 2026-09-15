@@ -121,7 +121,7 @@ struct FileBrowserView: View {
                                             try Data().write(to: fileURL)
                                             mgr.refreshFiles.toggle()
                                         } catch {
-                                            print("(fm) failed to create file: \(error)")
+                                            print("(fm) failed to create file: \(error.localizedDescription)")
                                             Alertinator.shared.alert(title: "Failed to create file!", body: Errors.checkLogs)
                                         }
                                     }
@@ -140,7 +140,7 @@ struct FileBrowserView: View {
                                             try data.write(to: fileURL)
                                             mgr.refreshFiles.toggle()
                                         } catch {
-                                            print("(fm) failed to create plist: \(error)")
+                                            print("(fm) failed to create plist: \(error.localizedDescription)")
                                             Alertinator.shared.alert(title: "Failed to create property list!", body: Errors.checkLogs)
                                         }
                                     }
@@ -157,7 +157,7 @@ struct FileBrowserView: View {
                                             try fm.createDirectoryIfNeeded(at: path.appendingPathComponent(name))
                                             mgr.refreshFiles.toggle()
                                         } catch {
-                                            print("(fm) failed to create folder: \(error)")
+                                            print("(fm) failed to create folder: \(error.localizedDescription)")
                                             Alertinator.shared.alert(title: "Failed to create folder!", body: Errors.checkLogs)
                                         }
                                     }
@@ -174,8 +174,8 @@ struct FileBrowserView: View {
                                             try fm.createSymbolicLink(atPath: path.appendingPathComponent(URL(fileURLWithPath: symPath).lastPathComponent).path, withDestinationPath: symPath)
                                             mgr.refreshFiles.toggle()
                                         } catch {
-                                            print("(fm) failed to create symlink: \(error)")
-                                            Alertinator.shared.alert(title: "Failed to create symlink!", body: "\(error)")
+                                            print("(fm) failed to create symlink: \(error.localizedDescription)")
+                                            Alertinator.shared.alert(title: "Failed to create symlink!", body: "\(error.localizedDescription)")
                                         }
                                     }
                                 })
@@ -297,7 +297,7 @@ struct FileBrowserView: View {
                 dirFiles = sortFiles(files: unsortedFiles)
                 unfilteredFiles = sortFiles(files: unsortedFiles)
             } catch {
-                print("[!] failed to load files from \(path): \(error)")
+                print("(fm) failed to load files from \(path): \(error.localizedDescription)")
                 showFailure = true
                 failMsg = "You may not have permission to view this directory. Check error logs for more detailed info."
             }
@@ -347,12 +347,12 @@ struct FileBrowserView: View {
                 try data.write(to: newURL)
                 mgr.refreshFiles.toggle()
             } catch {
-                print("(fm) failed to import file: \(error)")
-                Alertinator.shared.alert(title: "Failed to import file!", body: "\(error)")
+                print("(fm) failed to import file: \(error.localizedDescription)")
+                Alertinator.shared.alert(title: "Failed to import file!", body: "\(error.localizedDescription)")
             }
         case .failure(let error):
-            print("(fm) failed to import file: \(error)")
-            Alertinator.shared.alert(title: "Failed to import file!", body: "\(error)")
+            print("(fm) failed to import file: \(error.localizedDescription)")
+            Alertinator.shared.alert(title: "Failed to import file!", body: "\(error.localizedDescription)")
         }
     }
 }

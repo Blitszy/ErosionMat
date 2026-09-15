@@ -208,7 +208,7 @@ struct GestaltView: View {
                                     store.mgCurrentDict = NSMutableDictionary()
                                     Alertinator.shared.alert(title: "Successfully reset MobileGestalt!", body: MGMsg.mgResetComp, showCancel: false, actionLabel: "Exit App", action: { exitinator() })
                                 } catch {
-                                    print("(mg) failed to reset mobilegestalt: \(error)")
+                                    print("(mg) failed to reset mobilegestalt: \(error.localizedDescription)")
                                     Alertinator.shared.alert(title: "Failed to reset MobileGestalt!", body: AppMsg.opFailed)
                                 }
                             })
@@ -356,7 +356,7 @@ struct GestaltView: View {
             
             return currentDict
         } catch {
-            print("[!] failed to get mobilegestalt: \(error)")
+            print("(mg) failed to get mobilegestalt: \(error.localizedDescription)")
             Haptic.shared.play(.heavy)
             Alertinator.shared.alert(title: "Failed to get MobileGestalt!", body: "Tweaks will not work properly. Please leave this page.", showCancel: false, actionLabel: "Exit", action: { dismiss() })
         }
@@ -401,8 +401,8 @@ struct GestaltView: View {
                 throw "overwrite failed!"
             }
         } catch {
-            print("[!] failed to apply mobilegestalt: \(error)")
-            Alertinator.shared.alert(title: "Failed to apply MobileGestalt!", body: "Error: \(error)")
+            print("(mg) failed to apply mobilegestalt: \(error.localizedDescription)")
+            Alertinator.shared.alert(title: "Failed to apply MobileGestalt!", body: "Error: \(error.localizedDescription)")
         }
     }
     
@@ -426,7 +426,7 @@ struct GestaltView: View {
                 throw "overwrite failed!"
             }
         } catch {
-            print("[!] failed to revert mobilegestalt: \(error)")
+            print("(mg) failed to revert mobilegestalt: \(error.localizedDescription)")
             Alertinator.shared.alert(title: "Failed to revert MobileGestalt!", body: AppMsg.opFailed)
         }
     }

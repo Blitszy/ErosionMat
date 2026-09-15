@@ -157,6 +157,9 @@ struct PosterBoardView: View {
                         List {
                             Section {
                                 TextField("PosterBoard Path", text: $pbContainerPath, axis: .vertical)
+                                Button("Fetch Path") {
+                                    pbContainerPath = fsHandlers.getContainerPath(forMatch: "com.apple.PosterBoard")
+                                }
                             } header: {
                                 HeaderLabel("PosterBoard", symbol: "photo")
                             }
@@ -295,7 +298,7 @@ struct PosterBoardView: View {
             }
             return true
         } catch {
-            print("(pb) failed to reset \(item.rawValue): \(error)")
+            print("(pb) failed to reset \(item.rawValue): \(error.localizedDescription)")
             return false
         }
     }
@@ -316,7 +319,7 @@ struct PosterBoardView: View {
             }
             return true
         case .failure(let error):
-            print("(pb) failed to import file: \(error)")
+            print("(pb) failed to import file: \(error.localizedDescription)")
             return false
         }
     }

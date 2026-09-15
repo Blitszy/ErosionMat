@@ -136,7 +136,7 @@ final class KeypadManager: ObservableObject {
                 do {
                     try item.imgData.write(to: finalURL)
                 } catch {
-                    print("[!] failed to write image data: \(error)")
+                    print("(kp) failed to write image data: \(error.localizedDescription)")
                     failed += 1
                 }
             }
@@ -157,7 +157,7 @@ final class KeypadManager: ObservableObject {
             clearKeypads()
             return true
         } catch {
-            print("[!] failed to reset keypad items: \(error)")
+            print("(kp) failed to reset keypad items: \(error.localizedDescription)")
         }
         return false
     }
@@ -301,7 +301,7 @@ final class KeypadManager: ObservableObject {
             print("(kp) successfully imported theme! fileName: \(fileURL.lastPathComponent), imported keys: \(replaceCount)")
             return true
         } catch {
-            print("(kp) failed to import theme: \(error)")
+            print("(kp) failed to import theme: \(error.localizedDescription)")
         }
         return false
     }

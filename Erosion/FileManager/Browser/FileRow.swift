@@ -245,7 +245,7 @@ struct FileRow: View {
                     try fm.removeItem(at: file.fileURL)
                     mgr.refreshFiles.toggle()
                 } catch {
-                    print("[!] failed to delete file: \(error)")
+                    print("(fm) failed to delete file: \(error.localizedDescription)")
                     Alertinator.shared.alert(title: "Failed to delete file!", body: Errors.checkLogs)
                 }
             } label: {

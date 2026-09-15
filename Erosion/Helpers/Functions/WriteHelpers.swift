@@ -22,7 +22,7 @@ func writeFileTemp(_ data: Data, to url: URL) -> (Bool, String) {
         
         return (true, "succeeded")
     } catch {
-        print("[!] failed to write mobilegestalt: \(error)")
+        print("(fm) failed to write file: \(error.localizedDescription)")
         return (false, error.localizedDescription)
     }
 }

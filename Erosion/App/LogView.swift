@@ -42,7 +42,7 @@ struct LogView: View {
                             try data.write(to: tempURL)
                             presentShareSheet(with: tempURL)
                         } catch {
-                            print("[!] failed to export logs: \(error)")
+                            print("(fm) failed to export logs: \(error.localizedDescription)")
                         }
                     } label: {
                         Label("Export Logs", systemImage: "square.and.arrow.up")

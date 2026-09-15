@@ -28,7 +28,7 @@ final class PlistManager: ObservableObject {
             plistArray = plistArray.sorted(by: { $0.key < $1.key })
             return true
         } else {
-            print("[!] failed to load plist as it seems like there was no passable dictionary?")
+            print("(fm) failed to load plist as it seems like there was no passable dictionary?")
         }
         return false
     }
@@ -37,14 +37,14 @@ final class PlistManager: ObservableObject {
         if let newItem {
             let res = replacePlistItem(items: &plistArray, newItem: newItem)
             if !res {
-                print("[!] failed to write plist: couldn't find \(newItem.key) in dictionary.")
+                print("(fm) failed to write plist: couldn't find \(newItem.key) in dictionary.")
             }
         }
         
         if let delItem {
             let res = deletePlistItem(items: &plistArray, target: delItem)
             if !res {
-                print("[!] failed to write plist: couldn't find \(delItem.key) in dictionary.")
+                print("(fm) failed to write plist: couldn't find \(delItem.key) in dictionary.")
             }
         }
         
@@ -59,7 +59,7 @@ final class PlistManager: ObservableObject {
             try data.write(to: url)
             return true
         } catch {
-            print("[!] failed to write plist: \(error)")
+            print("(fm) failed to write plist: \(error.localizedDescription)")
         }
         return false
     }
