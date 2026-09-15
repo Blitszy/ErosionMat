@@ -104,7 +104,7 @@ struct GestaltView: View {
                 .disabled(store.isEnabled([MGKey.appIntell]))
                 
                 Section {
-                    PlainToggle( "Enable SRD UI", minVrs: 26.0, isOn: store.mgKeyBinding([MGKey.srd]))
+                    PlainToggle("Enable SRD UI", minVrs: 26.0, isOn: store.mgKeyBinding([MGKey.srd]))
                     if showRegionTweak {
                         PlainToggle("Disable Region Restrictions", isOn: store.mgRegionRestrictionsBinding())
                     }

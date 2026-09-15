@@ -18,6 +18,7 @@ enum PBMsg {
     static var corruption = "Please ensure that none of your wallpapers are corrupted, and try again."
     static var finishApply = "PosterBoard will open once you continue. Please kill it from the App Switcher. If no wallpapers show up, try resetting Collections, MercuryPoster, or Videos in the settings."
     static var applyInfo = "If no wallpapers appear inside of PosterBoard, reset Collections in settings and try again."
+    static var imprtFailed = "Ensure that you've selected a vaild wallpaper file and try again."
 }
 
 struct PosterBoardView: View {
@@ -219,8 +220,12 @@ struct PosterBoardView: View {
                     @MainActor
                     func proceed() {
                         let res = applyObjects(tendiesArray.filter { $0.isOn })
-                        if !res {
-                            Alertinator.shared.alert(title: "Failed to apply wallpapers!", body: PBMsg.corruption)
+                        if !res.0 {
+                            if res.1.contains("an item with the same name already exists") {
+                                Alertinator.shared.alert(title: "Failed to apply wallpapers!", body: "Some of the wallpapers you selected have already been added.")
+                            } else {
+                                Alertinator.shared.alert(title: "Failed to apply wallpapers!", body: PBMsg.corruption)
+                            }
                         } else {
                             Haptic.shared.play(.soft)
                             Alertinator.shared.alert(title: "Restart PosterBoard to finish applying!", body: PBMsg.finishApply, showCancel: false, actionLabel: "Continue", action: { openApp(withBID: SysBID.poster) })
@@ -232,7 +237,10 @@ struct PosterBoardView: View {
             }
         }
         .fileImporter(isPresented: $showImporter, allowedContentTypes: [.item]) { result in
-            handleImport(result)
+            let res = handleImport(result)
+            if !res {
+                Alertinator.shared.alert(title: "Failed to import .tendies!", body: PBMsg.imprtFailed)
+            }
         }
     }
     
@@ -250,31 +258,31 @@ struct PosterBoardView: View {
         }
     }
     
-    private func applyObjects(_ objects: [TendiesObject]) -> Bool {
+    private func applyObjects(_ objects: [TendiesObject]) -> (Bool, String) {
         let descrTargets = Set(objects.map(\.targetDescr))
         for descrTarget in descrTargets {
             let target = "\(pbContainerPath)/\(descrTarget.path)"
             let res = bq.grantAccess(atPath: target)
             if !res.0 {
                 print("(mg) failed to grant access at \(target): \(res.2)")
-                return false
+                return (false, res.2)
             }
         }
         
         for object in objects {
             let container = "\(pbContainerPath)/\(object.targetDescr.path)"
             for descr in object.descrNames {
-                let target = URL(fileURLWithPath: container).appendingPathComponent(UUID().uuidString)
                 let descrURL = AppURL.pbFolders.appendingPathComponent(object.folderName).appendingPathComponent(descr)
+                let target = object.targetDescr == .mercury ? URL(fileURLWithPath: container).appendingPathComponent(descrURL.lastPathComponent) : URL(fileURLWithPath: container).appendingPathComponent(UUID().uuidString)
                 do {
                     try fm.copyItem(at: descrURL, to: target)
                 } catch {
-                    print("(mg) failed to copy item at \(descrURL) to \(target): \(error)")
-                    return false
+                    print("(mg) failed to copy descriptor (folder: \(object.folderName)): \(error.localizedDescription)")
+                    return (false, error.localizedDescription)
                 }
             }
         }
-        return true
+        return (true, "")
     }
     
     private func resetWallpapers(for item: PBPath) -> Bool {
@@ -292,7 +300,7 @@ struct PosterBoardView: View {
         }
     }
     
-    private func handleImport(_ result: Result<URL, Error>) {
+    private func handleImport(_ result: Result<URL, Error>) -> Bool {
         switch result {
         case .success(let fileURL):
             let stopAccess = fileURL.startAccessingSecurityScopedResource()
@@ -306,8 +314,10 @@ struct PosterBoardView: View {
                     tendiesArray.append(tendies)
                 }
             }
+            return true
         case .failure(let error):
             print("(pb) failed to import file: \(error)")
+            return false
         }
     }
 }

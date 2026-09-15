@@ -95,11 +95,13 @@ final class PBHandler {
                 let descrRootURL = AppURL.pbFolders.appendingPathComponent(tendiesObject.folderName)
                 try fm.createDirIfNeeded(at: descrRootURL)
                 for url in descrURLs {
-                    let descrName = "CustomDescriptor_\(tendiesName)_\(UUID())"
+                    let descrName = tendiesObject.targetDescr == .mercury ? url.lastPathComponent : UUID().uuidString
                     let targetURL = descrRootURL.appendingPathComponent(descrName)
                     try fm.moveItem(at: url, to: targetURL)
                     tendiesObject.descrNames.append(descrName)
-                    randomizeWPIds(targetURL)
+                    if tendiesObject.targetDescr != .mercury {
+                        randomizeWPIds(targetURL)
+                    }
                 }
                 print("(pb) imported new .tendies successfully!\nObject: \(tendiesObject)")
                 return tendiesObject
