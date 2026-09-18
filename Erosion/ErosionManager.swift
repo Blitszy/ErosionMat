@@ -32,5 +32,8 @@ final class ErosionManager: ObservableObject {
     @Published var shouldRespring = false
     @Published var refreshFiles = false
     
+    @Published var storedFiles = [FileItem]()
+    @Published var storedURL: URL = URL(fileURLWithPath: "/")
+    
     init() {}
 }

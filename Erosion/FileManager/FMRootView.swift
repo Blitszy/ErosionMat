@@ -26,18 +26,20 @@ struct FMRootView: View {
     var body: some View {
         NavigationStack {
             List {
-                Section("Data Containers") {
-                    NavigationLink("Applications", destination: FileBrowserView(path: FSURL.appContainers, isContainer: true))
-                    NavigationLink("Daemons", destination: FileBrowserView(path: FSURL.internalDaemons, isContainer: true))
-                    NavigationLink("App Plugins", destination: FileBrowserView(path: FSURL.appPlugins, isContainer: true))
+                Section {
+                    NavigationLink("Data Containers", destination: FileBrowserView(path: FSURL.appContainers, isContainer: true))
+                    NavigationLink("Plugin Containers", destination: FileBrowserView(path: FSURL.appPlugins, isContainer: true))
+                    NavigationLink("App Groups", destination: FileBrowserView(path: FSURL.appGroup, shouldGrant: true))
+                } header: {
+                    HeaderLabel("Apps", symbol: "square.grid.2x2")
                 }
                 
-                if raveSupported() {
-                    Section("Other Containers") {
-                        NavigationLink("App Groups", destination: FileBrowserView(path: FSURL.appGroup, shouldGrant: true))
-                        NavigationLink("System App Data", destination: FileBrowserView(path: FSURL.systemData, shouldGrant: true))
-                        NavigationLink("SystemGroup Containers", destination: FileBrowserView(path: FSURL.sysGroup, isContainer: true))
-                    }
+                Section {
+                    NavigationLink("Daemon Containers", destination: FileBrowserView(path: FSURL.internalDaemons, isContainer: true))
+                    NavigationLink("System Containers", destination: FileBrowserView(path: FSURL.systemData, shouldGrant: true))
+                    NavigationLink("SystemGroup Containers", destination: FileBrowserView(path: FSURL.sysGroup, isContainer: true))
+                } header: {
+                    HeaderLabel("System", symbol: "gear")
                 }
             }
             .navigationTitle("File Browser")

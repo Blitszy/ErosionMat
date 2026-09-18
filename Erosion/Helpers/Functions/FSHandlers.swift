@@ -11,7 +11,7 @@ import UIKit
 let fsHandlers = FSHandlers()
 
 class FSHandlers {
-    func getDirPaths(_ path: String, maxInode: Int64 = 100000) -> [String] {
+    func getDirPaths(_ path: String, maxInode: Int64 = 10000000) -> [String] {
         var array = [""]
         path.withCString { path in
             guard let res = bad_query_list(UnsafeMutablePointer(mutating: path), maxInode) else {

@@ -8,6 +8,7 @@
 import SwiftUI
 
 import QuickLook
+import Combine
 
 enum FileSortMode: String, CaseIterable, Codable, Hashable {
     case system, name, date, type, size
@@ -34,8 +35,9 @@ struct FileBrowserView: View {
     @State private var dirFiles: [FileItem] = []
     @State private var unfilteredFiles: [FileItem] = []
     @State private var searchText = ""
+    @AppStorage("maxInode") var maxInode = 7500000
     @AppStorage("chosenSort") var chosenSort: FileSortMode = .system
-    @AppStorage("filesAscend") var filesAscend: Bool = true
+    @AppStorage("filesAscend") var filesAscend = true
     @AppStorage("listStyle") var listStyle = 1
     @AppStorage("hideDates") var hideDates = false
     @AppStorage("textViewerSize") var textViewerSize = 10
@@ -45,16 +47,24 @@ struct FileBrowserView: View {
     @State private var showFailure = false
     @State private var failMsg = ""
     @State private var isLoading = false
+    @State private var hasLoaded = false
     
     var body: some View {
         List {
             if isLoading {
                 Section {
-                    HStack {
-                        ProgressView()
-                            .offset(y: 0.5)
-                        Text("Loading Files...")
-                            .fontWeight(.medium)
+                    VStack(alignment: .leading) {
+                        HStack {
+                            ProgressView()
+                                .offset(y: 0.5)
+                            Text("Loading Files...")
+                                .fontWeight(.medium)
+                        }
+                        if isContainer {
+                            Text("These files could take 30 seconds or longer to load, since the method of getting container paths is very slow.")
+                                .font(.footnote)
+                                .foregroundStyle(.secondary)
+                        }
                     }
                 }
             } else if showFailure {
@@ -201,6 +211,18 @@ struct FileBrowserView: View {
                     NavigationLink {
                         List {
                             Section {
+                                HStack {
+                                    Text("Max Inode")
+                                    TextField("7500000", value: $maxInode, format: .number)
+                                        .multilineTextAlignment(.trailing)
+                                }
+                            } header: {
+                                HeaderLabel("Container Fetching", symbol: "externaldrive")
+                            } footer: {
+                                Text("This controls how quickly files can load. Lower values = faster fetching but less files.")
+                            }
+                            
+                            Section {
                                 Picker("List Style", selection: $listStyle) {
                                     Text("Default").tag(1)
                                     Text("Plain").tag(2)
@@ -241,26 +263,32 @@ struct FileBrowserView: View {
             mgr.refreshFiles.toggle()
         }
         .onAppear {
-            if shouldGrant {
-                let res = bq.grantAccess(atPath: path.path)
-                if res.0 {
-                    loadFilesFromPath()
-                } else {
-                    showFailure = true
-                    failMsg = "You don't have permission to view this directory."
-                }
+            if !mgr.storedFiles.isEmpty && mgr.storedURL == path {
+                dirFiles = sortFiles(files: mgr.storedFiles)
+                unfilteredFiles = sortFiles(files: mgr.storedFiles)
+            } else if isContainer && hasLoaded {
+                // do nothing as it's already being stored in the variable
             } else {
-                loadFilesFromPath()
+                if shouldGrant {
+                    let res = bq.grantAccess(atPath: path.path)
+                    if res.0 {
+                        loadFilesFromPath()
+                    } else {
+                        showFailure = true
+                        failMsg = "You don't have permission to view this directory."
+                    }
+                } else {
+                    loadFilesFromPath()
+                }
             }
         }
         // I want to talk to the Apple Engineer who thought it would be cool to remove the one-parameter action closure from onChange.
         .onChange(of: searchText) { (newSearch, _) in
-            if newSearch.isEmpty {
-                dirFiles = unfilteredFiles
-            } else {
-                dirFiles = unfilteredFiles.filter { $0.name.localizedCaseInsensitiveContains(newSearch) }
-            }
+            dirFiles = unfilteredFiles.filter { $0.name.localizedCaseInsensitiveContains(newSearch) }
         }
+        .modifier(KeyboardDismissObserver() {
+            dirFiles = unfilteredFiles
+        })
         .onChange(of: chosenSort) {
             loadFilesFromPath()
         }
@@ -279,7 +307,7 @@ struct FileBrowserView: View {
             do {
                 var unsortedFiles: [FileItem] = []
                 if isContainer {
-                    let paths = fsHandlers.getDirPaths(path.path)
+                    let paths = fsHandlers.getDirPaths(path.path, maxInode: Int64(maxInode))
                     for path in paths {
                         unsortedFiles.append(getFileItem(at: URL(fileURLWithPath: path), isContainer: true))
                     }
@@ -296,6 +324,11 @@ struct FileBrowserView: View {
                 }
                 dirFiles = sortFiles(files: unsortedFiles)
                 unfilteredFiles = sortFiles(files: unsortedFiles)
+                if isContainer {
+                    mgr.storedFiles = unsortedFiles
+                    mgr.storedURL = path
+                }
+                hasLoaded = true
             } catch {
                 print("(fm) failed to load files from \(path): \(error.localizedDescription)")
                 showFailure = true
@@ -357,6 +390,7 @@ struct FileBrowserView: View {
     }
 }
 
+// MARK: user interface
 extension View {
     @ViewBuilder
     func customListStyle(_ selection: Int) -> some View {
@@ -372,5 +406,25 @@ extension View {
         if #available(iOS 26.0, *) {
             self.contentMargins(.top, 1)
         }
+    }
+}
+
+struct KeyboardDismissObserver: ViewModifier {
+    var action: () -> Void
+    
+    func body(content: Content) -> some View {
+        content
+            .onReceive(Publishers.keyboardDismissed) { _ in
+                action()
+            }
+    }
+}
+
+extension Publishers {
+    static var keyboardDismissed: AnyPublisher<Void, Never> {
+        NotificationCenter.default
+            .publisher(for: UIResponder.keyboardDidHideNotification)
+            .map { _ in () }
+            .eraseToAnyPublisher()
     }
 }
