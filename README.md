@@ -2,7 +2,7 @@
   <br>
   <a href="https://jailbreak.party/discord"><img src="https://github.com/jailbreakdotparty/Erosion/blob/main/PreviewIcon.png?raw=true" alt="App Icon" width="150"></a>
   <br>
-  <h1>Erosion</h1>
+  <h1>ErosionMat</h1>
   <p>iOS customization toolbox using the <a href="https://github.com/forcequitOS/bad_query">bad_query</a> sandbox escape.</p>
   <p>Supports iOS 26.0 - 26.6.2 & iOS 27.0db1-db4.</p>
   <p><a href="https://jailbreak.party">Website</a> • <a href="https://jailbreak.party/discord">Discord</a> • <a href="https://x.com/jbdotparty">Twitter</a></p>
@@ -13,7 +13,7 @@
 </div>
 
 ### Before you begin...
-- Please create a backup of your device before usage! While Erosion has been extensively tested, there is still a possibility that you could lose your data by using this tool.
+- Please create a backup of your device before usage! While ErosionMat has been extensively tested, there is still a possibility that you could lose your data by using this tool.
 - If a tweak doesn't work how you were expecting, **do not open an issue or ask for support regarding it!** All tweaks are reliant on your device cooperating properly, and in some cases this can even involve Apple's servers. We'll be unable to help you.
 
 ### Supported Versions
@@ -29,6 +29,6 @@
 All iOS 26 versions cannot use some of the tweaks that this toolbox contains. The section below tells you what tweaks work on what versions.
 
 ### FAQ
-1. **Why can't I use MobileGestalt tweaks on iOS 26?** The exploit that Erosion relies on, `bad_query`, is *not* capable of writing to MobileGestalt, therefore those tweaks do not work.
+1. **Why can't I use MobileGestalt tweaks on iOS 26?** The exploit that ErosionMat relies on, `bad_query`, is *not* capable of writing to MobileGestalt, therefore those tweaks do not work.
 2. **Why aren't PosterBoard wallpapers showing up?** Sometimes, you'll have to reset Collections, which can be done in-app. If the wallpaper still doesn't show up after that, then it's likely a wallpaper-based issue rather than something that Erosion can solve.
 3. **Where can I get dialer themes and custom wallpapers?** Check out https://cowabun.ga/wallpapers for these features.
